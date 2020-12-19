@@ -8,6 +8,8 @@ variable "key_name" {}
 variable "public_subnet_cidr" {}
 variable "private_subnet_cidr" {}
 variable "private_subnet2_cidr" {}
+variable "customami" {}
+variable "autoscaling_instance_type" {}
 variable "public_subnet_name" {}
 variable "private_subnet_name" {}
 variable "private_subnet2_name" {}

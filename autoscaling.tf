@@ -1,7 +1,7 @@
 resource "aws_launch_configuration" "agent-lc" {
     name_prefix = "agent-lc-"
     image_id = "${var.customami}"
-    instance_type = "${var.instance_type}"
+    instance_type = "${var.autoscaling_instance_type}"
     lifecycle {
         create_before_destroy = true
     }
@@ -16,7 +16,7 @@ resource "aws_launch_configuration" "agent-lc" {
     health_check_type = "EC2"
     force_delete = true
     launch_configuration = "${aws_launch_configuration.agent-lc.name}"
-    tags {
+    tag {
         key = "Name"
         value = "Agent Instance"
         propagate_at_launch = true
@@ -86,9 +86,9 @@ module "alb" {
   subnets            = "${aws_subnet.subnet-public.id}"
   security_groups    = ["${aws_security_group.allow_all.id}"]
 
-  access_logs = {
-    bucket = "backentstatefile/logs"
-  }
+#   access_logs = {
+#     bucket = "backentstatefile/logs"
+#   }
 
   target_groups = [
     {
