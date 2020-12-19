@@ -23,7 +23,6 @@ resource "aws_subnet" "subnet-public" {
         Name = "${var.public_subnet_name}"
     }
 }
-
 resource "aws_subnet" "subnet-private" {
     vpc_id = "${aws_vpc.vpc.id}"
     cidr_block = "${var.private_subnet_cidr}"
@@ -32,6 +31,23 @@ resource "aws_subnet" "subnet-private" {
     tags = {
         Name = "${var.private_subnet_name}"
     }
+}
+resource "aws_subnet" "subnet-private2" {
+    vpc_id = "${aws_vpc.vpc.id}"
+    cidr_block = "${var.private_subnet2_cidr}"
+    availability_zone = "us-east-1c"
+
+    tags = {
+        Name = "${var.private_subnet2_name}"
+    }
+}
+resource "aws_db_subnet_group" "default" {
+  name       = "main"
+  subnet_ids = ["${aws_subnet.subnet-private.id}", "${aws_subnet.subnet-private2.id}"]
+
+  tags = {
+    Name = "My DB subnet group"
+  }
 }
 resource "aws_route_table" "terraform-public" {
     vpc_id = "${aws_vpc.vpc.id}"

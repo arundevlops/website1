@@ -7,15 +7,20 @@ variable "IGW_name" {}
 variable "key_name" {}
 variable "public_subnet_cidr" {}
 variable "private_subnet_cidr" {}
+variable "private_subnet2_cidr" {}
 variable "public_subnet_name" {}
 variable "private_subnet_name" {}
+variable "private_subnet2_name" {}
 variable "Main_Routing_Table" {}
 variable "azs" {
   description = "Run the EC2 Instances in these Availability Zones"
   type = "list"
-  default = ["us-east-1a", "us-east-1b"]
+  default = ["us-east-1a", "us-east-1b","us-east-1c"]
 }
-variable "environment" { default = "dev" }
+variable "environment" { 
+  type = "string"
+  default = "dev" 
+  }
 variable "instance_type" {
   type = "map"
   default = {

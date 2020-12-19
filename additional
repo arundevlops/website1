@@ -1,0 +1,110 @@
+
+# module "autoscaling" {
+#    source      = "./modules/autoscaling"
+#    namespace   = var.namespace
+#    ssh_keypair = var.ssh_keypair
+  
+#    vpc       = module.networking.vpc
+#    sg        = module.networking.sg
+#    db_config = module.database.db_config
+#  }
+  
+#  module "database" {
+#    source    = "./modules/database"
+#    namespace = var.namespace
+  
+#    vpc = module.networking.vpc
+#    sg  = module.networking.sg
+#  }
+  
+#  module "networking" {
+#    source    = "./modules/networking"
+#    namespace = var.namespace
+#  }
+#  resource "aws_launch_template" "webserver" {
+#    name_prefix   = var.namespace
+#    image_id      = data.aws_ami.ubuntu.id
+#    instance_type = "t2.micro"
+#    user_data     = data.template_cloudinit_config.config.rendered
+#    key_name      = var.ssh_keypair
+#    iam_instance_profile {
+#      name = module.iam_instance_profile.name
+#    }
+#    vpc_security_group_ids = [var.sg.websvr]
+#  }
+
+
+# resource "aws_launch_configuration" "agent-lc" {
+#     name_prefix = "agent-lc-"
+#     image_id = "${var.customami}"
+#     instance_type = "${var.instance_type}"
+#     lifecycle {
+#         create_before_destroy = true
+#     }
+
+#  resource "aws_autoscaling_group" "agents" {
+#     availability_zones = ["us-east-1a"]
+#     name = "agents"
+#     max_size = "20"
+#     min_size = "1"
+#     health_check_grace_period = 300
+#     health_check_type = "EC2"
+#     desired_capacity = 2
+#     force_delete = true
+#     launch_configuration = "${aws_launch_configuration.agent-lc.name}"
+
+#     tag {
+#         key = "Name"
+#         value = "Agent Instance"
+#         propagate_at_launch = true
+#     }
+# }
+# resource "aws_autoscaling_policy" "agents-scale-up" {
+#     name = "agents-scale-up"
+#     scaling_adjustment = 1
+#     adjustment_type = "ChangeInCapacity"
+#     cooldown = 300
+#     autoscaling_group_name = "${aws_autoscaling_group.agents.name}"
+# }
+
+# resource "aws_autoscaling_policy" "agents-scale-down" {
+#     name = "agents-scale-down"
+#     scaling_adjustment = -1
+#     adjustment_type = "ChangeInCapacity"
+#     cooldown = 300
+#     autoscaling_group_name = "${aws_autoscaling_group.agents.name}"
+# }
+# resource "aws_cloudwatch_metric_alarm" "memory-high" {
+#     alarm_name = "mem-util-high-agents"
+#     comparison_operator = "GreaterThanOrEqualToThreshold"
+#     evaluation_periods = "2"
+#     metric_name = "MemoryUtilization"
+#     namespace = "System/Linux"
+#     period = "300"
+#     statistic = "Average"
+#     threshold = "80"
+#     alarm_description = "This metric monitors ec2 memory for high utilization on agent hosts"
+#     alarm_actions = [
+#         "${aws_autoscaling_policy.agents-scale-up.arn}"
+#     ]
+#     dimensions = {
+#         AutoScalingGroupName = "${aws_autoscaling_group.agents.name}"
+#     }
+# }
+
+# resource "aws_cloudwatch_metric_alarm" "memory-low" {
+#     alarm_name = "mem-util-low-agents"
+#     comparison_operator = "LessThanOrEqualToThreshold"
+#     evaluation_periods = "2"
+#     metric_name = "MemoryUtilization"
+#     namespace = "System/Linux"
+#     period = "300"
+#     statistic = "Average"
+#     threshold = "40"
+#     alarm_description = "This metric monitors ec2 memory for low utilization on agent hosts"
+#     alarm_actions = [
+#         "${aws_autoscaling_policy.agents-scale-down.arn}"
+#     ]
+#     dimensions = {
+#         AutoScalingGroupName = "${aws_autoscaling_group.agents.name}"
+#     }
